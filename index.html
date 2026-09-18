@@ -1,0 +1,1351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#040303">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Wird">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="Wird — Ultra Premium Islamic Dhikr Counter. Offline, ad-free, haptic-enabled.">
+<meta name="application-name" content="Wird">
+<meta name="format-detection" content="telephone=no">
+<title>Wird — Premium Dhikr</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&family=Noto+Naskh+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#040303;
+  --bg-grad:radial-gradient(ellipse at 50% 20%, #0d0b08 0%, #060504 50%, #020202 100%);
+  --gold:#C6A962;
+  --gold-l:#E2C97E;
+  --gold-d:rgba(198,169,98,0.45);
+  --gold-g:rgba(198,169,98,0.12);
+  --gold-b:rgba(198,169,98,0.55);
+  --w1:rgba(245,240,232,0.98);
+  --w2:rgba(245,240,232,0.55);
+  --w3:rgba(245,240,232,0.18);
+  --w4:rgba(245,240,232,0.08);
+  --red:rgba(220,80,70,0.7);
+  --grn:rgba(100,190,140,0.7);
+  --sat:env(safe-area-inset-top,0px);
+  --sab:env(safe-area-inset-bottom,0px);
+  --sal:env(safe-area-inset-left,0px);
+  --sar:env(safe-area-inset-right,0px);
+}
+*{margin:0;padding:0;box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;-webkit-user-select:none}
+html,body{
+  height:100%;overflow:hidden;
+  background:var(--bg);color:var(--w1);
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',system-ui,sans-serif;
+  touch-action:manipulation;overscroll-behavior:none;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+body{background:var(--bg-grad);}
+input,textarea{user-select:text;-webkit-user-select:text}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:0.01ms!important;
+    animation-iteration-count:1!important;
+    transition-duration:0.01ms!important;
+  }
+}
+:focus-visible{outline:2px solid var(--gold-d);outline-offset:4px;border-radius:4px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+.app{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  height:100dvh;position:relative;
+  padding:var(--sat) 20px var(--sab);
+  z-index:1;
+}
+.hdr{
+  position:absolute;
+  top:max(var(--sat),16px);
+  left:max(var(--sal),20px);
+  right:max(var(--sar),20px);
+  display:flex;justify-content:space-between;align-items:flex-start;
+  transition:opacity 0.6s ease;
+}
+.hdr-l,.hdr-r{display:flex;flex-direction:column;gap:4px}
+.hdr-r{align-items:flex-end}
+.sk{font-size:0.7rem;color:var(--gold-d);letter-spacing:1.5px;font-weight:500;min-height:1em}
+.dy{font-size:0.6rem;color:var(--grn);letter-spacing:1px;font-weight:400;opacity:0;transition:opacity 0.5s ease;}
+.dy.show{opacity:1}
+.ss{font-size:0.7rem;color:var(--w2);letter-spacing:1px;font-weight:400;font-variant-numeric:tabular-nums;transition:color 0.3s ease;min-height:1em}
+.ss.active{color:var(--gold-d)}
+.lt{font-size:0.65rem;color:var(--w2);letter-spacing:1px;font-weight:400;font-variant-numeric:tabular-nums;}
+
+.dots{display:flex;gap:4px;margin-bottom:16px;transition:opacity 0.6s ease;}
+.dots button{
+  display:block;width:6px;height:6px;border:none;
+  padding:10px;margin:-10px;
+  background-clip:content-box;
+  border-radius:50%;background-color:var(--w3);
+  cursor:pointer;
+  transition:background-color 0.4s cubic-bezier(0.22,1,0.36,1),width 0.4s cubic-bezier(0.22,1,0.36,1),border-radius 0.4s ease;
+}
+.dots button.on{background-color:var(--gold-d);width:18px;border-radius:3px;}
+
+.ar{
+  font-size:clamp(1.6rem,6vw,2.4rem);
+  color:rgba(210,180,110,0.95);
+  letter-spacing:1px;font-weight:400;
+  direction:rtl;text-align:center;line-height:1.6;
+  font-family:'Amiri Quran','Noto Naskh Arabic','KFGQPC Uthman Taha Naskh','Scheherazade New','Amiri','Traditional Arabic',serif;
+  text-shadow:0 2px 12px rgba(198,169,98,0.25);
+  transition:opacity 0.6s ease;
+  min-height:1.6em;
+}
+.ar-sub{font-size:0.65rem;color:var(--w2);letter-spacing:3px;text-transform:uppercase;font-weight:400;margin-top:6px;margin-bottom:8px;transition:opacity 0.6s ease;}
+.hadith{font-size:0.65rem;color:rgba(245,240,232,0.5);letter-spacing:0.5px;font-weight:300;text-align:center;max-width:320px;line-height:1.5;margin-bottom:16px;transition:opacity 0.8s ease;min-height:2.4em;}
+
+.rw{position:relative;width:min(72vw,300px);height:min(72vw,300px);display:flex;align-items:center;justify-content:center;transition:opacity 0.8s ease;}
+.rw::before{content:'';position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle,var(--gold-g) 0%,transparent 65%);animation:breathe 5s ease-in-out infinite;pointer-events:none;}
+@keyframes breathe{0%,100%{opacity:0.3;transform:scale(0.97)} 50%{opacity:0.7;transform:scale(1.03)}}
+.rw::after{content:'';position:absolute;inset:5%;border-radius:50%;background:radial-gradient(circle,rgba(198,169,98,0.06) 0%,transparent 55%);opacity:0;pointer-events:none;transition:opacity 0.5s ease;}
+.rw.golden::after{animation:goldenPulse 2s ease-in-out infinite;}
+@keyframes goldenPulse{0%,100%{opacity:0.3;transform:scale(0.95)} 50%{opacity:0.8;transform:scale(1.05)}}
+.rsvg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg);}
+.rsvg circle{fill:none}
+.r-bg{stroke:var(--w3);stroke-width:0.8}
+.r-fg{stroke:var(--gold);stroke-width:1.8;stroke-linecap:round;stroke-dasharray:552.92;stroke-dashoffset:552.92;transition:stroke-dashoffset 0.5s cubic-bezier(0.22,1,0.36,1);filter:drop-shadow(0 0 8px var(--gold-g));}
+.r-fg.glow{stroke-width:2.2;filter:drop-shadow(0 0 16px var(--gold-b));}
+.r-fg.over{stroke:var(--gold-l);stroke-width:2.8;filter:drop-shadow(0 0 24px var(--gold-b));}
+.ms{fill:var(--w3);transition:fill 0.4s ease,filter 0.4s ease}
+.ms.lit{fill:var(--gold);filter:drop-shadow(0 0 6px var(--gold-d))}
+
+.cw{text-align:center;z-index:2;pointer-events:none}
+.ct{font-size:clamp(3.5rem,15vw,6rem);font-weight:300;letter-spacing:-2px;line-height:1;color:var(--w1);font-variant-numeric:tabular-nums;transition:transform 0.12s cubic-bezier(0.22,1,0.36,1);}
+.ct.d5{font-size:clamp(2.6rem,11vw,4.4rem);letter-spacing:-1px}
+.ct.d6{font-size:clamp(2.1rem,9vw,3.6rem);letter-spacing:0}
+.ct.d7{font-size:clamp(1.7rem,7.5vw,3rem);letter-spacing:0}
+.ct.pop{transform:scale(1.06)}
+.ct.invite{animation:invitePulse 2.5s ease-in-out infinite;}
+@keyframes invitePulse{0%,100%{opacity:0.4;transform:scale(0.97)} 50%{opacity:0.9;transform:scale(1.02)}}
+.gl{font-size:0.75rem;color:rgba(245,240,232,0.5);font-weight:400;letter-spacing:2px;margin-top:8px;}
+.gb{font-size:0.55rem;color:var(--gold);letter-spacing:3px;margin-top:6px;opacity:0;transition:opacity 0.6s ease;min-height:1em}
+.gb.show{opacity:1}
+
+.hint{position:absolute;bottom:max(calc(var(--sab) + 75px),95px);font-size:0.6rem;color:rgba(245,240,232,0.3);letter-spacing:3px;text-transform:uppercase;font-weight:400;transition:opacity 1.5s ease;pointer-events:none}
+
+.undo{
+  position:absolute;
+  bottom:max(calc(var(--sab) + 74px),94px);
+  right:max(var(--sar),18px);
+  width:44px;height:44px;border-radius:50%;
+  background:var(--w4);border:1px solid var(--w3);
+  color:var(--w2);font-size:1rem;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 0.4s ease,color 0.2s ease,border-color 0.2s ease;
+}
+.undo.show{opacity:1;pointer-events:auto}
+.undo:active{color:var(--gold);border-color:var(--gold-d)}
+
+.nav{position:absolute;bottom:max(var(--sab),14px);display:flex;gap:0;align-items:center;transition:opacity 0.6s ease;}
+.nav button{background:none;border:none;color:var(--w2);font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;font-weight:400;padding:14px 18px;min-width:44px;min-height:44px;cursor:pointer;font-family:inherit;transition:color 0.2s ease;}
+.nav button:active{color:var(--gold-d)}
+.nav .sp{width:1px;height:16px;background:var(--w3)}
+
+.app.zen .hdr,.app.zen .dots,.app.zen .ar,.app.zen .ar-sub,.app.zen .hadith,.app.zen .hint,.app.zen .nav,.app.zen .undo{opacity:0!important;pointer-events:none}
+
+.rip{position:fixed;border-radius:50%;background:radial-gradient(circle,var(--gold-g) 0%,transparent 70%);transform:scale(0);animation:ripA 0.7s ease-out forwards;pointer-events:none;z-index:2;}
+@keyframes ripA{to{transform:scale(4);opacity:0}}
+.glow-b{position:fixed;border-radius:50%;pointer-events:none;z-index:55;background:radial-gradient(circle,rgba(198,169,98,0.1) 0%,transparent 60%);animation:glowA 1.2s ease-out forwards;}
+@keyframes glowA{0%{transform:scale(0.5);opacity:0.9} 100%{transform:scale(3.5);opacity:0}}
+.flash{position:fixed;inset:0;pointer-events:none;z-index:50;background:radial-gradient(circle at 50% 45%,var(--gold-g) 0%,transparent 55%);opacity:0;transition:opacity 0.6s ease;}
+.flash.on{opacity:1}
+
+.ov{position:fixed;inset:0;background:#040303;z-index:99990;display:flex;flex-direction:column;align-items:center;
+  padding:max(calc(var(--sat) + 48px),56px) 20px max(calc(var(--sab) + 40px),48px);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  opacity:0;pointer-events:none;transform:translateY(12px);
+  transition:opacity 0.3s ease,transform 0.3s ease;}
+.ov.on{opacity:1;pointer-events:auto;transform:translateY(0)}
+.ov h3{font-size:0.7rem;color:var(--w2);font-weight:400;letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;}
+.ov .x{position:absolute;top:max(var(--sat),16px);right:max(var(--sar),16px);background:none;border:none;color:var(--w2);font-size:0.9rem;letter-spacing:2px;cursor:pointer;font-family:inherit;padding:10px;min-width:44px;min-height:44px;z-index:2;}
+.sr{display:flex;justify-content:space-between;gap:12px;width:100%;max-width:320px;padding:12px 0;border-bottom:1px solid var(--w4);}
+.sr .l{font-size:0.75rem;color:var(--w2);font-weight:400}
+.sr .v{font-size:0.8rem;color:var(--gold-d);font-weight:500;font-variant-numeric:tabular-nums;white-space:nowrap}
+.ss-sec{margin-top:20px;width:100%;max-width:320px}
+.ss-sec h4{font-size:0.58rem;color:var(--w3);letter-spacing:2px;text-transform:uppercase;font-weight:500;margin-bottom:10px;}
+.cal-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;width:100%;max-width:280px;margin-bottom:4px;}
+.cal-hdr span{font-size:0.5rem;color:rgba(245,240,232,0.3);text-align:center;letter-spacing:1px;font-weight:400;}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;width:100%;max-width:280px;margin-bottom:16px;}
+.cd{aspect-ratio:1;border-radius:3px;background:var(--w4);}
+.cd.a{background:var(--gold-d)}
+.cd.c{background:var(--gold)}
+.cd.t{outline:1px solid var(--gold-d);outline-offset:2px}
+.cd.empty{background:transparent}
+.wk-bar{display:flex;align-items:flex-end;gap:10px;height:65px;width:100%;max-width:280px;margin:10px 0 16px;}
+.wk-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end;}
+.wk-fill{width:100%;border-radius:3px 3px 0 0;background:var(--gold-d);transition:height 0.4s ease;min-height:3px;}
+.wk-fill.cur{background:var(--gold)}
+.wk-lbl{font-size:0.48rem;color:rgba(245,240,232,0.35);letter-spacing:0.5px;}
+.setr{display:flex;justify-content:space-between;align-items:center;gap:12px;width:100%;max-width:320px;padding:14px 0;border-bottom:1px solid var(--w4);}
+.setr .l{font-size:0.75rem;color:var(--w2);font-weight:400}
+.setr .sub{font-size:0.52rem;color:rgba(245,240,232,0.3);font-weight:300;margin-top:3px;line-height:1.4}
+.tg{width:44px;height:24px;border-radius:12px;background:var(--w3);position:relative;cursor:pointer;border:none;transition:background 0.3s ease;flex-shrink:0;}
+.tg.on{background:var(--gold-d)}
+.tg::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;background:var(--w2);transition:left 0.3s ease,background 0.3s ease;}
+.tg.on::after{left:22px;background:var(--gold)}
+.pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px;}
+.pills button{background:var(--w4);border:1px solid var(--w3);color:var(--w2);padding:10px 14px;border-radius:8px;font-size:0.75rem;cursor:pointer;font-family:inherit;transition:border-color 0.2s ease,color 0.2s ease,background 0.2s ease;}
+.pills button:active,.pills button.sel{border-color:var(--gold-d);color:var(--gold);background:var(--gold-g);}
+.abtn{margin-top:12px;background:none;border:1px solid var(--w3);color:rgba(245,240,232,0.45);padding:12px 18px;border-radius:8px;font-size:0.65rem;letter-spacing:2px;cursor:pointer;font-family:inherit;transition:border-color 0.2s ease,color 0.2s ease,background 0.2s ease;width:100%;max-width:320px;text-align:center;}
+.abtn:active{border-color:var(--gold-d);color:var(--gold)}
+.abtn.danger{border-color:rgba(220,80,70,0.25);color:var(--red)}
+.abtn.share{border-color:var(--gold-d);color:var(--gold);margin-top:20px;}
+.abtn.share:active{background:var(--gold-g)}
+.foot{margin-top:24px;font-size:0.5rem;color:rgba(245,240,232,0.22);letter-spacing:2px;text-align:center;line-height:1.8}
+.inp{flex:1;min-width:0;background:var(--w4);border:1px solid var(--w3);color:var(--w1);padding:10px;border-radius:8px;font-size:0.75rem;outline:none;font-family:inherit}
+
+.rst{position:fixed;inset:0;background:rgba(2,2,2,0.98);z-index:99995;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px;opacity:0;pointer-events:none;transition:opacity 0.3s ease;}
+.rst.on{opacity:1;pointer-events:auto}
+.rst p{font-size:0.85rem;color:var(--w2);font-weight:400;letter-spacing:1px;text-align:center;line-height:1.6}
+.rst .btns{display:flex;gap:16px}
+.rst button{padding:12px 24px;border-radius:8px;font-size:0.7rem;letter-spacing:2px;cursor:pointer;font-family:inherit;border:1px solid var(--w3);background:none;color:var(--w2);min-height:44px}
+.rst .cfm{border-color:rgba(220,80,70,0.35);color:var(--red)}
+.rst .cfm:active{background:rgba(220,80,70,0.15)}
+
+#impF{display:none}
+.toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(198,169,98,0.22);color:var(--gold);padding:10px 24px;border-radius:25px;font-size:0.7rem;letter-spacing:1px;opacity:0;transition:opacity 0.3s ease;pointer-events:none;z-index:999999;max-width:86vw;text-align:center;}
+.toast.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div class="app" id="app" role="application" aria-label="Wird Dhikr Counter">
+  <div class="hdr" id="hdr">
+    <div class="hdr-l">
+      <div class="sk" id="sk"></div>
+      <div class="dy" id="dy">ALL GOALS ✓</div>
+    </div>
+    <div class="hdr-r">
+      <div class="ss" id="ss"></div>
+      <div class="lt" id="lt"></div>
+    </div>
+  </div>
+
+  <div class="dots" id="dots" role="tablist" aria-label="Select dhikr"></div>
+
+  <div class="ar" id="ar" lang="ar" dir="rtl"></div>
+  <div class="ar-sub" id="arsub"></div>
+  <div class="hadith" id="hadith"></div>
+
+  <div class="rw" id="rw">
+    <svg class="rsvg" viewBox="0 0 200 200" aria-hidden="true" focusable="false">
+      <circle class="r-bg" cx="100" cy="100" r="88"/>
+      <circle class="r-fg" id="rfg" cx="100" cy="100" r="88"/>
+      <circle class="ms" id="m1" cx="188" cy="100" r="3"/>
+      <circle class="ms" id="m2" cx="100" cy="188" r="3"/>
+      <circle class="ms" id="m3" cx="12" cy="100" r="3"/>
+    </svg>
+    <div class="cw">
+      <div class="ct" id="ct">0</div>
+      <div class="gl" id="gl">/ 100</div>
+      <div class="gb" id="gb">✓ GOAL REACHED</div>
+    </div>
+  </div>
+
+  <div class="hint" id="hint">tap anywhere</div>
+  <button class="undo" id="undoB" aria-label="Undo last count" title="Undo">↺</button>
+
+  <div class="nav" id="nav">
+    <button id="bp" aria-label="Previous dhikr">◂</button><div class="sp"></div>
+    <button id="bs">STATS</button><div class="sp"></div>
+    <button id="bt">SETTINGS</button><div class="sp"></div>
+    <button id="bn" aria-label="Next dhikr">▸</button>
+  </div>
+
+  <div class="sr-only" id="live" role="status" aria-live="polite"></div>
+</div>
+
+<div class="ov" id="ovS" role="dialog" aria-modal="true" aria-label="Statistics">
+  <button class="x" id="xS" aria-label="Close statistics">✕</button>
+  <h3>Statistics</h3>
+  <div id="sc" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
+</div>
+
+<div class="ov" id="ovT" role="dialog" aria-modal="true" aria-label="Settings">
+  <button class="x" id="xT" aria-label="Close settings">✕</button>
+  <h3>Settings</h3>
+  <div id="tc" style="width:100%;display:flex;flex-direction:column;align-items:center"></div>
+</div>
+
+<div class="rst" id="ovR" role="dialog" aria-modal="true" aria-label="Confirm">
+  <p id="rstMsg"></p>
+  <div class="btns">
+    <button id="rc">CANCEL</button>
+    <button class="cfm" id="ry">CONFIRM</button>
+  </div>
+</div>
+
+<div class="flash" id="fl" aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="impF" accept="application/json,.json" tabindex="-1" aria-hidden="true">
+
+<script>
+(function(){
+'use strict';
+
+/* ============================================================
+   WIRD — Premium Dhikr Counter
+   ============================================================ */
+
+var D = [
+  {a:'أَسْتَغْفِرُ ٱللَّهَ', e:'Astaghfirullah', g:100, h:'The Prophet ﷺ sought forgiveness 100x daily (Muslim 2702)'},
+  {a:'سُبْحَانَ اللَّهِ', e:'SubhanAllah', g:33, h:'33x after salah — part of Tasbeeh Fatimah (Bukhari 6329)'},
+  {a:'الْحَمْدُ لِلَّهِ', e:'Alhamdulillah', g:33, h:'33x after salah — part of Tasbeeh Fatimah (Bukhari 6329)'},
+  {a:'اللَّهُ أَكْبَرُ', e:'Allahu Akbar', g:34, h:'34x after salah — completes Tasbeeh Fatimah (Bukhari 6329)'},
+  {a:'لَا إِلَٰهَ إِلَّا ٱللَّٰهُ', e:'La ilaha illallah', g:100, h:'The best dhikr is La ilaha illallah (Tirmidhi 3383)'},
+  {a:'اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ', e:'Salawat', g:100, h:'Whoever sends one salawat, Allah sends ten upon him (Muslim 408)'},
+  {a:'سُبْحَانَ اللَّهِ وَبِحَمْدِهِ', e:'SubhanAllahi wa bihamdihi', g:100, h:'100x daily — sins forgiven though like sea foam (Bukhari 6405)'},
+  {a:'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ', e:'La hawla wa la quwwata illa billah', g:100, h:'A treasure from the treasures of Paradise (Bukhari 6384)'}
+];
+
+var CONFIG = {
+  CIRC: 2 * Math.PI * 88,
+  GOALS: [33, 34, 100, 300, 500, 1000, 5000, 10000],
+  SESSION_GAP_MS: 5000,
+  MAX_RIPPLES: 6,
+  LONG_PRESS_MS: 700,
+  TAP_SLOP: 14,
+  SWIPE_MIN: 60,
+  ZEN_MS: 15000,
+  HISTORY_DAYS: 400,
+  VERSION: 3
+};
+
+var K = function(k){ return 'wird_v8_' + k; };
+
+/* ---------- Date helpers (LOCAL time — no UTC drift) ---------- */
+function pad2(n){ return n < 10 ? '0' + n : '' + n; }
+function keyOf(d){ return d.getFullYear() + '-' + pad2(d.getMonth()+1) + '-' + pad2(d.getDate()); }
+function parseKey(k){
+  var p = String(k).split('-');
+  var d = new Date(+p[0], (+p[1]) - 1, +p[2]);
+  return isNaN(d.getTime()) ? new Date() : d;
+}
+function keyShift(k, n){
+  var d = parseKey(k);
+  d.setDate(d.getDate() + n);
+  return keyOf(d);
+}
+function rolloverHour(){
+  var rh = (typeof S !== 'undefined' && S && typeof S.rh === 'number') ? S.rh : 4;
+  return (rh >= 0 && rh <= 12) ? rh : 4;
+}
+function getDayKey(dateObj){
+  var d = dateObj ? new Date(dateObj.getTime()) : new Date();
+  d.setHours(d.getHours() - rolloverHour());
+  return keyOf(d);
+}
+
+/* ---------- State ---------- */
+function def(){
+  return {
+    _v: CONFIG.VERSION,
+    d: 0, c:{}, g:{}, lt:{}, h:{}, ht:{}, ms:{}, gh:{},
+    tToday: 0, sk: 0, best: 0, ld: '',
+    snd: false, vib: true, wk: true, wood: false, dailyReset: false,
+    rh: 4
+  };
+}
+
+function migrate(s){
+  if(!s._v || s._v < 3){
+    if(!s.gh || typeof s.gh !== 'object') s.gh = {};
+    if(typeof s.best !== 'number') s.best = (typeof s.sk === 'number' ? s.sk : 0);
+    if(typeof s.dailyReset !== 'boolean') s.dailyReset = false;
+    s._v = 3;
+  }
+  return s;
+}
+
+function sanitize(s){
+  if(!s || typeof s !== 'object') return def();
+  var base = def();
+  ['c','g','lt','h','ht','ms','gh'].forEach(function(k){
+    if(!s[k] || typeof s[k] !== 'object' || Array.isArray(s[k])) s[k] = {};
+  });
+  ['snd','vib','wk','wood','dailyReset'].forEach(function(k){
+    if(typeof s[k] !== 'boolean') s[k] = base[k];
+  });
+  if(typeof s.rh !== 'number' || s.rh < 0 || s.rh > 12) s.rh = 4;
+  if(typeof s.tToday !== 'number' || s.tToday < 0 || !isFinite(s.tToday)) s.tToday = 0;
+  if(typeof s.sk !== 'number' || s.sk < 0 || !isFinite(s.sk)) s.sk = 0;
+  if(typeof s.best !== 'number' || s.best < 0 || !isFinite(s.best)) s.best = 0;
+  if(typeof s.ld !== 'string') s.ld = '';
+
+  D.forEach(function(dh, i){
+    s.c[i]  = Math.max(0, Math.min(parseInt(s.c[i], 10)  || 0, 9999999));
+    s.g[i]  = Math.max(1, Math.min(parseInt(s.g[i], 10)  || dh.g, 9999999));
+    s.lt[i] = Math.max(0, Math.min(parseInt(s.lt[i], 10) || 0, 999999999));
+    s.ms[i] = Math.max(0, Math.min(parseInt(s.ms[i], 10) || 0, 3));
+    s.gh[i] = !!s.gh[i];
+  });
+
+  // Clean history objects
+  Object.keys(s.h).forEach(function(k){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(k) || !s.h[k] || typeof s.h[k] !== 'object'){ delete s.h[k]; return; }
+    Object.keys(s.h[k]).forEach(function(j){
+      var v = parseInt(s.h[k][j], 10);
+      if(!(v > 0)) delete s.h[k][j]; else s.h[k][j] = v;
+    });
+    if(Object.keys(s.h[k]).length === 0) delete s.h[k];
+  });
+  Object.keys(s.ht).forEach(function(k){
+    var v = parseInt(s.ht[k], 10);
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(k) || !(v > 0)) delete s.ht[k]; else s.ht[k] = v;
+  });
+
+  if(typeof s.d !== 'number' || s.d < 0 || s.d >= D.length || isNaN(s.d)) s.d = 0;
+  if(s.sk > s.best) s.best = s.sk;
+  return migrate(s);
+}
+
+function prune(){
+  var cutoff = keyShift(getDayKey(), -CONFIG.HISTORY_DAYS);
+  [S.h, S.ht].forEach(function(obj){
+    Object.keys(obj).forEach(function(k){ if(k < cutoff) delete obj[k]; });
+  });
+}
+
+function load(){
+  try{
+    var raw = localStorage.getItem(K('s'));
+    if(!raw) return def();
+    return sanitize(JSON.parse(raw));
+  }catch(e){ return def(); }
+}
+
+var S = load();
+
+var saveT = null, storageWarned = false;
+function writeNow(){
+  try{ localStorage.setItem(K('s'), JSON.stringify(S)); }
+  catch(e){
+    if(!storageWarned){ storageWarned = true; showToast('Storage full — export your data'); }
+  }
+}
+function save(){
+  if(saveT) clearTimeout(saveT);
+  saveT = setTimeout(function(){ saveT = null; writeNow(); }, 400);
+}
+function flushSave(){
+  if(saveT){ clearTimeout(saveT); saveT = null; }
+  writeNow();
+}
+
+/* ---------- Day rollover ---------- */
+function rollDate(){
+  var t = getDayKey();
+  if(!S.ld){ S.ld = t; save(); return false; }
+  if(S.ld === t) return false;
+
+  var yKey = keyShift(t, -1);
+  var yData = S.h[yKey];
+  var hadYest = !!(yData && Object.keys(yData).some(function(k){ return yData[k] > 0; }));
+
+  if(hadYest) S.sk = (S.sk || 0) + 1;
+  else S.sk = 0;
+  if(S.sk > (S.best || 0)) S.best = S.sk;
+
+  S.ld = t;
+  S.tToday = 0;
+  D.forEach(function(_, i){
+    S.ms[i] = 0;
+    S.gh[i] = false;
+    if(S.dailyReset) S.c[i] = 0;
+  });
+  ssReset();
+  prune();
+  flushSave();
+  return true;
+}
+
+/* ---------- DOM ---------- */
+var $ = function(id){ return document.getElementById(id); };
+var E = {
+  app:$('app'), ct:$('ct'), gl:$('gl'), gb:$('gb'), rfg:$('rfg'),
+  ar:$('ar'), arsub:$('arsub'), hadith:$('hadith'),
+  sk:$('sk'), lt:$('lt'), ss:$('ss'), dy:$('dy'), dots:$('dots'),
+  hint:$('hint'), fl:$('fl'), m1:$('m1'), m2:$('m2'), m3:$('m3'),
+  rw:$('rw'), ovS:$('ovS'), ovT:$('ovT'), ovR:$('ovR'),
+  sc:$('sc'), tc:$('tc'), toast:$('toast'), live:$('live'),
+  undoB:$('undoB'), rstMsg:$('rstMsg')
+};
+
+function initDots(){
+  E.dots.innerHTML = '';
+  D.forEach(function(dh, i){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('role','tab');
+    b.setAttribute('aria-label', dh.e);
+    b.addEventListener('click', function(ev){
+      ev.stopPropagation();
+      if(S.d === i) return;
+      S.d = i; ssReset(); save(); render(); vb([6]); zenReset();
+    });
+    E.dots.appendChild(b);
+  });
+}
+initDots();
+
+/* ---------- Formatting ---------- */
+function fmt(n){
+  n = n || 0;
+  if(n >= 1e6) return (n/1e6).toFixed(1).replace(/\.0$/,'') + 'M';
+  if(n >= 1e4) return (n/1e3).toFixed(1).replace(/\.0$/,'') + 'K';
+  return n.toLocaleString('en-US');
+}
+function exact(n){ return (n || 0).toLocaleString('en-US'); }
+function fmtTime(sec){
+  sec = Math.max(0, Math.floor(sec || 0));
+  if(sec < 1) return '0s';
+  var h = Math.floor(sec/3600), m = Math.floor((sec%3600)/60), s = sec%60;
+  if(h > 0) return h + 'h ' + m + 'm';
+  if(m > 0) return m + 'm ' + s + 's';
+  return s + 's';
+}
+function esc(str){
+  return String(str).replace(/[&<>"']/g, function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+  });
+}
+
+var toastT = null;
+function showToast(msg){
+  E.toast.textContent = msg;
+  E.toast.classList.add('show');
+  if(toastT) clearTimeout(toastT);
+  toastT = setTimeout(function(){ E.toast.classList.remove('show'); }, 2400);
+}
+function announce(msg){ E.live.textContent = msg; }
+
+function todayTotal(){
+  var data = S.h[getDayKey()] || {};
+  var t = 0;
+  D.forEach(function(_, j){ t += (data[j] || 0); });
+  return t;
+}
+
+/* ---------- Render ---------- */
+function render(){
+  var i = S.d;
+  var c = S.c[i] || 0;
+  var g = S.g[i] || D[i].g;
+  var p = Math.min(c / g, 1);
+  var over = c > g;
+
+  var txt = exact(c);
+  E.ct.textContent = txt;
+  E.ct.className = 'ct' + (txt.length > 9 ? ' d7' : txt.length > 7 ? ' d6' : txt.length > 5 ? ' d5' : '');
+  E.gl.textContent = '/ ' + exact(g);
+
+  if(over){
+    E.rfg.style.strokeDashoffset = '0';
+    E.rfg.classList.add('over');
+    E.rfg.classList.remove('glow');
+  }else{
+    E.rfg.style.strokeDashoffset = String(CONFIG.CIRC - CONFIG.CIRC * p);
+    E.rfg.classList.remove('over');
+    E.rfg.classList.toggle('glow', c >= g && c > 0);
+  }
+
+  E.ar.textContent = D[i].a;
+  E.arsub.textContent = D[i].e;
+  E.hadith.textContent = D[i].h;
+  E.gb.classList.toggle('show', c >= g && c > 0);
+
+  var ms = S.ms[i] || 0;
+  E.m1.classList.toggle('lit', ms >= 1 || p >= 0.25);
+  E.m2.classList.toggle('lit', ms >= 2 || p >= 0.50);
+  E.m3.classList.toggle('lit', ms >= 3 || p >= 0.75);
+
+  var todayData = S.h[getDayKey()] || {};
+  var anyToday = Object.keys(todayData).some(function(k){ return todayData[k] > 0; });
+
+  var sk = S.sk || 0;
+  if(anyToday && sk === 0) sk = 1;
+  E.sk.textContent = sk > 0 ? ('\u25CF ' + sk + 'd') : '';
+
+  E.lt.textContent = '\u221E ' + fmt(S.lt[i] || 0);
+
+  // "All goals" reflects TODAY's progress, not the persistent counter
+  var allDone = D.every(function(dh, j){ return (todayData[j] || 0) >= (S.g[j] || dh.g); });
+  E.dy.classList.toggle('show', allDone);
+
+  var dots = E.dots.children;
+  for(var j = 0; j < dots.length; j++){
+    dots[j].className = (j === i) ? 'on' : '';
+    dots[j].setAttribute('aria-selected', j === i ? 'true' : 'false');
+  }
+
+  E.undoB.classList.toggle('show', c > 0 && !isZen);
+
+  if(c > 0){
+    E.hint.style.opacity = '0';
+    E.ct.classList.remove('invite');
+  }else{
+    E.hint.style.opacity = '';
+    if(!anyToday){
+      E.ct.classList.add('invite');
+      E.hint.textContent = 'tap to begin';
+    }else{
+      E.ct.classList.remove('invite');
+      E.hint.textContent = 'tap anywhere';
+    }
+  }
+}
+
+/* ---------- Audio ---------- */
+var ax = null;
+function ga(){
+  try{
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return null;
+    if(!ax) ax = new AC();
+    if(ax.state === 'suspended') ax.resume();
+    return ax;
+  }catch(e){ return null; }
+}
+function sndTap(){
+  if(!S.snd) return;
+  try{
+    var x = ga(); if(!x) return;
+    var t = x.currentTime;
+    var o = x.createOscillator(), g = x.createGain();
+    o.connect(g); g.connect(x.destination);
+    o.type = 'triangle'; o.frequency.value = 900;
+    g.gain.setValueAtTime(0.025, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.035);
+    o.start(t); o.stop(t + 0.045);
+  }catch(e){}
+}
+function sndWood(){
+  if(!S.snd) return;
+  try{
+    var x = ga(); if(!x) return;
+    var t = x.currentTime;
+    var o = x.createOscillator(), g = x.createGain(), f = x.createBiquadFilter();
+    f.type = 'bandpass'; f.frequency.value = 420; f.Q.value = 2.5;
+    o.connect(f); f.connect(g); g.connect(x.destination);
+    o.type = 'square';
+    o.frequency.setValueAtTime(620, t);
+    o.frequency.exponentialRampToValueAtTime(110, t + 0.05);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.linearRampToValueAtTime(0.11, t + 0.004);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.06);
+    o.start(t); o.stop(t + 0.07);
+  }catch(e){}
+}
+function sndMilestone(){
+  if(!S.snd) return;
+  try{
+    var x = ga(); if(!x) return;
+    var t = x.currentTime;
+    var o = x.createOscillator(), g = x.createGain();
+    o.connect(g); g.connect(x.destination);
+    o.type = 'sine'; o.frequency.value = 1047;
+    g.gain.setValueAtTime(0.02, t);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.25);
+    o.start(t); o.stop(t + 0.3);
+  }catch(e){}
+}
+function sndComplete(){
+  if(!S.snd) return;
+  try{
+    var x = ga(); if(!x) return;
+    var t = x.currentTime;
+    [523.25, 659.25, 783.99, 1046.5].forEach(function(fq, i){
+      var o = x.createOscillator(), g = x.createGain();
+      o.connect(g); g.connect(x.destination);
+      o.type = 'sine'; o.frequency.value = fq;
+      var st = t + i * 0.1;
+      g.gain.setValueAtTime(0.02, st);
+      g.gain.exponentialRampToValueAtTime(0.0001, st + 0.4);
+      o.start(st); o.stop(st + 0.45);
+    });
+  }catch(e){}
+}
+function vb(p){
+  try{ if(S.vib && navigator.vibrate) navigator.vibrate(p); }catch(e){}
+}
+
+/* ---------- Wake lock ---------- */
+var wl = null;
+function wkOn(){
+  if(!S.wk || !('wakeLock' in navigator) || document.visibilityState !== 'visible') return;
+  try{
+    navigator.wakeLock.request('screen').then(function(lock){
+      wl = lock;
+      lock.addEventListener('release', function(){ wl = null; });
+    }).catch(function(){});
+  }catch(e){}
+}
+function wkOff(){
+  if(wl){ try{ wl.release(); }catch(e){} wl = null; }
+}
+
+/* ---------- Session time tracking ---------- */
+var ssLastTap = 0, ssUIInt = null;
+function ssTap(){
+  var now = Date.now();
+  if(ssLastTap > 0){
+    var diff = now - ssLastTap;
+    if(diff > 0 && diff < CONFIG.SESSION_GAP_MS){
+      var add = Math.round(diff / 1000);
+      if(add > 0){
+        S.tToday = (S.tToday || 0) + add;
+        var tk = getDayKey();
+        S.ht[tk] = (S.ht[tk] || 0) + add;
+      }
+    }
+  }
+  ssLastTap = now;
+  E.ss.classList.add('active');
+  ssUpdateUI();
+  if(ssUIInt) clearTimeout(ssUIInt);
+  ssUIInt = setTimeout(function(){ E.ss.classList.remove('active'); }, 3000);
+}
+function ssUpdateUI(){
+  var t = S.tToday || 0;
+  E.ss.textContent = t === 0 ? '' : fmtTime(t);
+}
+function ssReset(){
+  ssLastTap = 0;
+  if(ssUIInt){ clearTimeout(ssUIInt); ssUIInt = null; }
+  E.ss.classList.remove('active');
+  ssUpdateUI();
+}
+
+/* ---------- Zen mode ---------- */
+var zenT = null, isZen = false;
+function zenReset(){
+  if(isZen){ isZen = false; E.app.classList.remove('zen'); }
+  if(zenT) clearTimeout(zenT);
+  zenT = setTimeout(function(){
+    if((S.c[S.d] || 0) > 0 && !anyOverlayOpen()){
+      isZen = true;
+      E.app.classList.add('zen');
+    }
+  }, CONFIG.ZEN_MS);
+  E.undoB.classList.toggle('show', (S.c[S.d] || 0) > 0);
+}
+function anyOverlayOpen(){
+  return E.ovS.classList.contains('on') || E.ovT.classList.contains('on') || E.ovR.classList.contains('on');
+}
+
+/* ---------- Visual effects (pooled) ---------- */
+var ripplePool = [];
+function ripple(x, y){
+  if(x == null || y == null) return;
+  var r = ripplePool.pop();
+  if(!r){ r = document.createElement('div'); r.className = 'rip'; }
+  r.style.animation = 'none';
+  r.style.cssText = 'left:' + (x-50) + 'px;top:' + (y-50) + 'px;width:100px;height:100px';
+  document.body.appendChild(r);
+  setTimeout(function(){
+    if(r.parentNode) r.parentNode.removeChild(r);
+    if(ripplePool.length < CONFIG.MAX_RIPPLES) ripplePool.push(r);
+  }, 720);
+}
+function glowBurst(){
+  var cx = window.innerWidth/2, cy = window.innerHeight*0.42;
+  var g = document.createElement('div');
+  g.className = 'glow-b';
+  g.style.cssText = 'left:' + (cx-80) + 'px;top:' + (cy-80) + 'px;width:160px;height:160px';
+  document.body.appendChild(g);
+  setTimeout(function(){ if(g.parentNode) g.parentNode.removeChild(g); }, 1250);
+}
+var popT = null;
+function pulse(){
+  E.ct.classList.add('pop');
+  if(popT) clearTimeout(popT);
+  popT = setTimeout(function(){ E.ct.classList.remove('pop'); }, 120);
+}
+var flashT = null;
+function flash(){
+  E.fl.classList.add('on');
+  if(flashT) clearTimeout(flashT);
+  flashT = setTimeout(function(){ E.fl.classList.remove('on'); }, 700);
+}
+
+/* ---------- Core counting ---------- */
+function doCount(x, y){
+  rollDate();
+  var i = S.d;
+  var g = S.g[i] || D[i].g;
+
+  S.c[i] = (S.c[i] || 0) + 1;
+  S.lt[i] = (S.lt[i] || 0) + 1;
+
+  var tk = getDayKey();
+  if(!S.h[tk]) S.h[tk] = {};
+  S.h[tk][i] = (S.h[tk][i] || 0) + 1;
+
+  ssTap();
+  zenReset();
+
+  var c = S.c[i];
+  var msNow = Math.min(Math.floor((c / g) * 4), 3);
+  var msFired = false;
+  if(msNow > (S.ms[i] || 0)){
+    S.ms[i] = msNow;
+    msFired = true;
+  }
+
+  var goalNow = (c >= g && !S.gh[i]);
+  if(goalNow) S.gh[i] = true;
+
+  save();
+
+  requestAnimationFrame(function(){
+    render();
+    pulse();
+    ripple(x, y);
+  });
+
+  if(goalNow){
+    vb([30,50,30,50,30,50,60]);
+    sndComplete();
+    flash(); glowBurst();
+    announce('Goal reached for ' + D[i].e);
+  }else if(msFired){
+    vb([25,40,25]);
+    sndMilestone();
+  }else{
+    vb([28]);
+    if(S.wood) sndWood(); else sndTap();
+  }
+}
+
+function undoCount(){
+  var i = S.d;
+  if((S.c[i] || 0) <= 0){ return; }
+  var g = S.g[i] || D[i].g;
+
+  S.c[i] = Math.max(0, S.c[i] - 1);
+  if((S.lt[i] || 0) > 0) S.lt[i]--;
+
+  var tk = getDayKey();
+  if(S.h[tk] && S.h[tk][i] > 0){
+    S.h[tk][i]--;
+    if(S.h[tk][i] <= 0) delete S.h[tk][i];
+    if(Object.keys(S.h[tk]).length === 0) delete S.h[tk];
+  }
+
+  S.ms[i] = Math.min(Math.floor((S.c[i] / g) * 4), 3);
+  if(S.c[i] < g) S.gh[i] = false;
+
+  save(); render(); zenReset();
+  vb([12]);
+  announce('Undone. Count is now ' + S.c[i]);
+}
+E.undoB.addEventListener('click', function(e){ e.stopPropagation(); undoCount(); });
+
+/* ---------- Pointer interaction ---------- */
+var activeId = null, pStart = null, lpTimer = null, lpFired = false;
+
+function inChrome(target){
+  return !!(target.closest && (target.closest('.nav') || target.closest('.ov') ||
+    target.closest('.rst') || target.closest('.dots') || target.closest('#undoB')));
+}
+
+E.app.addEventListener('pointerdown', function(e){
+  if(anyOverlayOpen()) return;
+  if(inChrome(e.target)) return;
+  if(activeId !== null) return;            // ignore multi-touch extra fingers
+  if(e.pointerType === 'mouse' && e.button !== 0) return;
+
+  activeId = e.pointerId;
+  lpFired = false;
+  pStart = { x: e.clientX, y: e.clientY, t: Date.now() };
+
+  ga(); // unlock audio on first gesture
+
+  if(e.target.closest && (e.target.closest('.rw') || e.target.closest('#ct'))){
+    lpTimer = setTimeout(function(){
+      lpFired = true;
+      openConfirm('reset');
+      vb([40]);
+    }, CONFIG.LONG_PRESS_MS);
+  }
+}, {passive:true});
+
+E.app.addEventListener('pointermove', function(e){
+  if(e.pointerId !== activeId || !pStart) return;
+  var dx = e.clientX - pStart.x, dy = e.clientY - pStart.y;
+  if(lpTimer && (dx*dx + dy*dy) > CONFIG.TAP_SLOP * CONFIG.TAP_SLOP){
+    clearTimeout(lpTimer); lpTimer = null;
+  }
+}, {passive:true});
+
+function endPointer(e, cancelled){
+  if(e.pointerId !== activeId) return;
+  if(lpTimer){ clearTimeout(lpTimer); lpTimer = null; }
+  var st = pStart;
+  activeId = null; pStart = null;
+  if(cancelled || lpFired || !st) return;
+
+  var dx = e.clientX - st.x, dy = e.clientY - st.y;
+  var dist = Math.sqrt(dx*dx + dy*dy);
+
+  if(Math.abs(dx) >= CONFIG.SWIPE_MIN && Math.abs(dx) > Math.abs(dy) * 1.4){
+    sw(dx < 0 ? 1 : -1);
+    return;
+  }
+  if(dist <= CONFIG.TAP_SLOP){
+    doCount(e.clientX, e.clientY);
+  }
+}
+E.app.addEventListener('pointerup', function(e){ endPointer(e, false); });
+E.app.addEventListener('pointercancel', function(e){ endPointer(e, true); });
+E.app.addEventListener('contextmenu', function(e){ e.preventDefault(); });
+
+/* ---------- Dhikr switching ---------- */
+function sw(dir){
+  S.d = (S.d + dir + D.length) % D.length;
+  ssReset(); save(); render(); vb([6]); zenReset();
+  announce(D[S.d].e);
+}
+$('bp').addEventListener('click', function(e){ e.stopPropagation(); sw(-1); });
+$('bn').addEventListener('click', function(e){ e.stopPropagation(); sw(1); });
+
+/* ---------- Keyboard ---------- */
+document.addEventListener('keydown', function(e){
+  if(e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
+
+  if(e.key === 'Escape'){
+    if(E.ovR.classList.contains('on')) closeConfirm();
+    else if(E.ovS.classList.contains('on')) closeOv(E.ovS);
+    else if(E.ovT.classList.contains('on')) closeOv(E.ovT);
+    return;
+  }
+  if(anyOverlayOpen()) return;
+
+  if(e.key === ' ' || e.key === 'Enter'){
+    e.preventDefault();
+    doCount(window.innerWidth/2, window.innerHeight/2);
+  }else if(e.key === 'ArrowRight'){ e.preventDefault(); sw(1); }
+  else if(e.key === 'ArrowLeft'){ e.preventDefault(); sw(-1); }
+  else if(e.key === 'Backspace'){ e.preventDefault(); undoCount(); }
+});
+
+/* ---------- Golden hour ---------- */
+var goldenInt = null;
+function checkGoldenHour(){
+  var now = new Date();
+  var rollover = new Date(now);
+  rollover.setHours(rolloverHour(), 0, 0, 0);
+  if(now >= rollover) rollover.setDate(rollover.getDate() + 1);
+  var diff = rollover - now;
+  var isGolden = diff > 0 && diff < 3600000;
+  E.rw.classList.toggle('golden', isGolden && todayTotal() === 0);
+}
+goldenInt = setInterval(function(){
+  if(rollDate()) render();
+  checkGoldenHour();
+  ssUpdateUI();
+}, 30000);
+checkGoldenHour();
+
+/* ---------- Overlays ---------- */
+function openOv(ov){
+  if(isZen){ isZen = false; E.app.classList.remove('zen'); }
+  if(zenT) clearTimeout(zenT);
+  ov.classList.add('on');
+  ov.scrollTop = 0;
+}
+function closeOv(ov){
+  ov.classList.remove('on');
+  zenReset();
+}
+
+/* ---------- Statistics ---------- */
+function buildStats(){
+  rollDate();
+  var i = S.d;
+  var c = S.c[i] || 0, g = S.g[i] || D[i].g;
+  var tk = getDayKey();
+  var todayCount = (S.h[tk] && S.h[tk][i]) || 0;
+
+  var grand = 0, todayAll = 0;
+  D.forEach(function(_, j){
+    grand += (S.lt[j] || 0);
+    todayAll += ((S.h[tk] && S.h[tk][j]) || 0);
+  });
+
+  var yKey = keyShift(tk, -1);
+  var yestTime = S.ht[yKey] || 0;
+  var totalTime = 0;
+  Object.keys(S.ht).forEach(function(k){ totalTime += (S.ht[k] || 0); });
+
+  var activeDays = Object.keys(S.h).length;
+  var avgPerDay = activeDays > 0 ? Math.round(grand / activeDays) : 0;
+
+  var h = '';
+  h += '<div class="sr"><span class="l">Current Goal Progress</span><span class="v">' + exact(c) + ' / ' + exact(g) + '</span></div>';
+  h += '<div class="sr"><span class="l">Today — ' + esc(D[i].e) + '</span><span class="v">' + fmt(todayCount) + '</span></div>';
+  h += '<div class="sr"><span class="l">Today — All Dhikr</span><span class="v">' + fmt(todayAll) + '</span></div>';
+  h += '<div class="sr"><span class="l">Lifetime — ' + esc(D[i].e) + '</span><span class="v">' + fmt(S.lt[i] || 0) + '</span></div>';
+  h += '<div class="sr"><span class="l">Grand Total (All Dhikr)</span><span class="v">' + fmt(grand) + '</span></div>';
+  h += '<div class="sr"><span class="l">Current Streak</span><span class="v">' + (S.sk || 0) + ' days</span></div>';
+  h += '<div class="sr"><span class="l">Longest Streak</span><span class="v">' + (S.best || 0) + ' days</span></div>';
+  h += '<div class="sr"><span class="l">Active Days</span><span class="v">' + activeDays + '</span></div>';
+  h += '<div class="sr"><span class="l">Average / Active Day</span><span class="v">' + fmt(avgPerDay) + '</span></div>';
+
+  h += '<div class="ss-sec"><h4>Time Statistics</h4>';
+  h += '<div class="sr"><span class="l">Today\u2019s Active Time</span><span class="v">' + fmtTime(S.tToday || 0) + '</span></div>';
+  h += '<div class="sr"><span class="l">Yesterday\u2019s Active Time</span><span class="v">' + fmtTime(yestTime) + '</span></div>';
+  h += '<div class="sr"><span class="l">Lifetime Active Time</span><span class="v">' + fmtTime(totalTime) + '</span></div>';
+  h += '</div>';
+
+  /* Weekly comparison */
+  h += '<div class="ss-sec"><h4>Weekly Comparison</h4><div class="wk-bar">';
+  var wkData = [], maxWk = 1;
+  for(var w = 3; w >= 0; w--){
+    var wTot = 0;
+    for(var dd = 0; dd < 7; dd++){
+      var kk = keyShift(tk, -(w*7 + dd));
+      var dat = S.h[kk];
+      if(dat) D.forEach(function(_, j){ wTot += (dat[j] || 0); });
+    }
+    wkData.push(wTot);
+    if(wTot > maxWk) maxWk = wTot;
+  }
+  var wkLbl = ['3w ago','2w ago','Last wk','This wk'];
+  wkData.forEach(function(v, idx){
+    var pct = Math.max((v / maxWk) * 100, 3);
+    h += '<div class="wk-col"><div class="wk-fill' + (idx === 3 ? ' cur' : '') +
+         '" style="height:' + pct.toFixed(1) + '%" title="' + v + '"></div>' +
+         '<span class="wk-lbl">' + wkLbl[idx] + '</span></div>';
+  });
+  h += '</div></div>';
+
+  /* 30-day calendar */
+  h += '<div class="ss-sec"><h4>30-Day Activity</h4>';
+  h += '<div class="cal-hdr"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>';
+  h += '<div class="cal">';
+  var firstKey = keyShift(tk, -29);
+  var startDay = parseKey(firstKey).getDay();
+  for(var pp = 0; pp < startDay; pp++) h += '<div class="cd empty"></div>';
+  for(var dd2 = 29; dd2 >= 0; dd2--){
+    var kk2 = keyShift(tk, -dd2);
+    var data = S.h[kk2] || {};
+    var tot = 0;
+    D.forEach(function(_, j){ tot += (data[j] || 0); });
+    var allGoal = tot > 0 && D.every(function(dh, j){ return (data[j] || 0) >= (S.g[j] || dh.g); });
+    h += '<div class="cd' + (tot > 0 ? ' a' : '') + (allGoal ? ' c' : '') + (dd2 === 0 ? ' t' : '') +
+         '" title="' + kk2 + ': ' + tot + '"></div>';
+  }
+  h += '</div></div>';
+
+  h += '<div class="ss-sec"><h4>All Dhikr \u2014 Lifetime</h4>';
+  D.forEach(function(dh, j){
+    h += '<div class="sr"><span class="l">' + esc(dh.e) + '</span><span class="v">' + fmt(S.lt[j] || 0) + '</span></div>';
+  });
+  h += '</div>';
+
+  h += '<div class="foot">WIRD \u2014 v' + CONFIG.VERSION + '<br>ALL DATA STORED ON THIS DEVICE ONLY</div>';
+
+  E.sc.innerHTML = h;
+}
+$('bs').addEventListener('click', function(e){ e.stopPropagation(); buildStats(); openOv(E.ovS); });
+$('xS').addEventListener('click', function(e){ e.stopPropagation(); closeOv(E.ovS); });
+
+/* ---------- Settings ---------- */
+function renderSet(){
+  var i = S.d, g = S.g[i] || D[i].g, rh = rolloverHour();
+  var h = '';
+
+  h += '<div class="setr"><div><span class="l">Sound</span><div class="sub">Soft tone on each count</div></div><button class="tg' + (S.snd?' on':'') + '" data-k="snd" aria-label="Toggle sound" aria-pressed="' + !!S.snd + '"></button></div>';
+  h += '<div class="setr"><div><span class="l">Vibration</span><div class="sub">Haptic feedback</div></div><button class="tg' + (S.vib?' on':'') + '" data-k="vib" aria-label="Toggle vibration" aria-pressed="' + !!S.vib + '"></button></div>';
+  h += '<div class="setr"><div><span class="l">Screen Awake</span><div class="sub">Keeps display on while counting</div></div><button class="tg' + (S.wk?' on':'') + '" data-k="wk" aria-label="Toggle screen awake" aria-pressed="' + !!S.wk + '"></button></div>';
+  h += '<div class="setr"><div><span class="l">Tasbeeh Sound</span><div class="sub">Wooden bead click instead of tone</div></div><button class="tg' + (S.wood?' on':'') + '" data-k="wood" aria-label="Toggle tasbeeh sound" aria-pressed="' + !!S.wood + '"></button></div>';
+  h += '<div class="setr"><div><span class="l">Daily Reset</span><div class="sub">Counter starts at 0 each new day. Off keeps long-term goals running.</div></div><button class="tg' + (S.dailyReset?' on':'') + '" data-k="dailyReset" aria-label="Toggle daily reset" aria-pressed="' + !!S.dailyReset + '"></button></div>';
+
+  h += '<div class="setr" style="flex-direction:column;align-items:flex-start;gap:10px">';
+  h += '<div><span class="l">Day Rollover</span><div class="sub">New day begins at this hour (for tahajjud)</div></div>';
+  h += '<div class="pills" style="justify-content:flex-start;margin:0">';
+  [0,2,3,4,5,6].forEach(function(v){
+    h += '<button data-rh="' + v + '" class="' + (v === rh ? 'sel' : '') + '" style="padding:8px 12px;font-size:0.7rem">' + v + ' AM</button>';
+  });
+  h += '</div></div>';
+
+  h += '<div class="ss-sec"><h4>Target Goal \u2014 ' + esc(D[i].e) + '</h4><div class="pills">';
+  CONFIG.GOALS.forEach(function(v){
+    h += '<button data-g="' + v + '" class="' + (v === g ? 'sel' : '') + '">' + fmt(v) + '</button>';
+  });
+  h += '</div>';
+  h += '<div style="display:flex;gap:8px;margin-top:12px;width:100%">';
+  h += '<input type="number" inputmode="numeric" min="1" max="9999999" id="customG" class="inp" placeholder="Custom target">';
+  h += '<button id="setCustomG" class="abtn" style="margin:0;width:auto;padding:10px 16px">SET</button></div>';
+  h += '<button class="abtn" id="applyAll" style="margin-top:8px">APPLY THIS GOAL TO ALL DHIKR</button>';
+  h += '</div>';
+
+  h += '<button class="abtn share" id="shareB">\u2764 SHARE APP \u2014 SAWAB-E-JARIYA</button>';
+  h += '<button class="abtn" id="expB">EXPORT DATA (BACKUP)</button>';
+  h += '<button class="abtn" id="impB">IMPORT DATA (RESTORE)</button>';
+  h += '<button class="abtn danger" id="rstB">RESET CURRENT COUNTER</button>';
+  h += '<button class="abtn danger" id="wipeB">ERASE ALL DATA</button>';
+  h += '<div class="foot">WIRD \u2014 v' + CONFIG.VERSION + '<br>100% OFFLINE \u00B7 NO ADS \u00B7 NO TRACKING</div>';
+
+  E.tc.innerHTML = h;
+
+  E.tc.querySelectorAll('.tg').forEach(function(t){
+    t.addEventListener('click', function(e){
+      e.stopPropagation();
+      var k = this.dataset.k;
+      S[k] = !S[k];
+      flushSave();
+      if(k === 'wk'){ S.wk ? wkOn() : wkOff(); }
+      renderSet(); render(); vb([8]);
+    });
+  });
+
+  E.tc.querySelectorAll('[data-rh]').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.stopPropagation();
+      S.rh = parseInt(this.dataset.rh, 10);
+      S.ld = getDayKey();
+      flushSave(); renderSet(); render(); checkGoldenHour(); vb([8]);
+    });
+  });
+
+  E.tc.querySelectorAll('[data-g]').forEach(function(b){
+    b.addEventListener('click', function(e){
+      e.stopPropagation();
+      applyGoal(i, parseInt(this.dataset.g, 10));
+    });
+  });
+
+  function applyGoal(idx, val){
+    if(!(val > 0)) return;
+    S.g[idx] = Math.min(val, 9999999);
+    S.gh[idx] = (S.c[idx] || 0) >= S.g[idx];
+    S.ms[idx] = Math.min(Math.floor(((S.c[idx] || 0) / S.g[idx]) * 4), 3);
+    flushSave(); render(); renderSet(); vb([8]);
+  }
+
+  var setCG = E.tc.querySelector('#setCustomG'), inpCG = E.tc.querySelector('#customG');
+  if(setCG && inpCG){
+    var doCustom = function(e){
+      if(e) e.stopPropagation();
+      var val = parseInt(inpCG.value, 10);
+      if(!val || val < 1){ showToast('Enter a number above 0'); return; }
+      applyGoal(i, val);
+      showToast('Goal set: ' + exact(Math.min(val, 9999999)));
+    };
+    setCG.addEventListener('click', doCustom);
+    inpCG.addEventListener('keydown', function(ev){ if(ev.key === 'Enter') doCustom(ev); });
+  }
+
+  var applyAll = E.tc.querySelector('#applyAll');
+  if(applyAll) applyAll.addEventListener('click', function(e){
+    e.stopPropagation();
+    var val = S.g[i] || D[i].g;
+    D.forEach(function(_, j){
+      S.g[j] = val;
+      S.gh[j] = (S.c[j] || 0) >= val;
+      S.ms[j] = Math.min(Math.floor(((S.c[j] || 0) / val) * 4), 3);
+    });
+    flushSave(); render(); renderSet(); vb([8]);
+    showToast('Goal ' + exact(val) + ' applied to all');
+  });
+
+  var shareB = E.tc.querySelector('#shareB');
+  if(shareB) shareB.addEventListener('click', function(e){
+    e.stopPropagation();
+    var url = location.origin + location.pathname.replace(/index\.html$/, '');
+    var text = '\uD83D\uDCFF Wird \u2014 Premium Islamic Dhikr Counter. Offline, ad-free, beautiful.\n\n' +
+               'Sawab-e-Jariya: share it, and earn reward each time someone makes dhikr with it.\n\n' + url;
+    if(navigator.share){
+      navigator.share({ title: 'Wird \u2014 Premium Dhikr', text: text, url: url }).catch(function(){});
+    }else if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){ showToast('Link copied'); })
+        .catch(function(){ legacyCopy(text); });
+    }else legacyCopy(text);
+    vb([15,30,15]);
+  });
+
+  function legacyCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); showToast('Link copied'); }catch(err){ showToast('Copy failed'); }
+    document.body.removeChild(ta);
+  }
+
+  var expB = E.tc.querySelector('#expB');
+  if(expB) expB.addEventListener('click', function(e){
+    e.stopPropagation();
+    try{
+      flushSave();
+      var blob = new Blob([JSON.stringify(S, null, 2)], {type:'application/json'});
+      var url2 = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url2; a.download = 'wird-backup-' + getDayKey() + '.json';
+      document.body.appendChild(a); a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url2); }, 2000);
+      showToast('Backup downloaded');
+    }catch(err){ showToast('Export failed'); }
+  });
+
+  var impB = E.tc.querySelector('#impB');
+  if(impB) impB.addEventListener('click', function(e){ e.stopPropagation(); $('impF').click(); });
+
+  var rstB = E.tc.querySelector('#rstB');
+  if(rstB) rstB.addEventListener('click', function(e){
+    e.stopPropagation(); closeOv(E.ovT); openConfirm('reset');
+  });
+
+  var wipeB = E.tc.querySelector('#wipeB');
+  if(wipeB) wipeB.addEventListener('click', function(e){
+    e.stopPropagation(); closeOv(E.ovT); openConfirm('wipe');
+  });
+}
+
+$('bt').addEventListener('click', function(e){ e.stopPropagation(); renderSet(); openOv(E.ovT); });
+$('xT').addEventListener('click', function(e){ e.stopPropagation(); closeOv(E.ovT); });
+
+/* ---------- Import ---------- */
+$('impF').addEventListener('change', function(){
+  var f = this.files && this.files[0];
+  var input = this;
+  if(!f){ return; }
+  if(f.size > 3e6){ showToast('File too large'); input.value = ''; return; }
+  var r = new FileReader();
+  r.onerror = function(){ showToast('Could not read file'); input.value = ''; };
+  r.onload = function(ev){
+    try{
+      var d = JSON.parse(ev.target.result);
+      if(!d || typeof d !== 'object' || Array.isArray(d)) throw new Error('invalid');
+      if(!d.c && !d.lt && !d.h) throw new Error('invalid');
+      S = sanitize(d);
+      if(!S.ld) S.ld = getDayKey();
+      prune();
+      flushSave();
+      ssReset(); render(); renderSet();
+      closeOv(E.ovT);
+      vb([15,30,15]);
+      showToast('Data restored successfully');
+    }catch(err){
+      showToast('Invalid backup file');
+      vb([50,30,50]);
+    }
+    input.value = '';
+  };
+  r.readAsText(f);
+});
+
+/* ---------- Confirm dialog ---------- */
+var confirmMode = null;
+function openConfirm(mode){
+  confirmMode = mode;
+  if(mode === 'wipe'){
+    E.rstMsg.innerHTML = 'Erase <b>all</b> data permanently?<br><span style="font-size:0.62rem;color:var(--w3)">Counts, streaks, history and settings will be lost. Export a backup first.</span>';
+  }else{
+    E.rstMsg.innerHTML = 'Reset the ' + esc(D[S.d].e) + ' counter?<br><span style="font-size:0.62rem;color:var(--w3)">Daily history, lifetime totals and streak stay safe.</span>';
+  }
+  if(isZen){ isZen = false; E.app.classList.remove('zen'); }
+  if(zenT) clearTimeout(zenT);
+  E.ovR.classList.add('on');
+}
+function closeConfirm(){
+  E.ovR.classList.remove('on');
+  confirmMode = null;
+  zenReset();
+}
+$('rc').addEventListener('click', function(e){ e.stopPropagation(); closeConfirm(); });
+$('ry').addEventListener('click', function(e){
+  e.stopPropagation();
+  if(confirmMode === 'wipe'){
+    try{ localStorage.removeItem(K('s')); }catch(err){}
+    S = def();
+    S.ld = getDayKey();
+    flushSave(); ssReset(); render();
+    closeConfirm();
+    vb([60,40,60]);
+    showToast('All data erased');
+  }else{
+    S.c[S.d] = 0;
+    S.ms[S.d] = 0;
+    S.gh[S.d] = false;
+    flushSave(); render();
+    closeConfirm();
+    vb([50]);
+    showToast('Counter reset');
+  }
+});
+E.ovR.addEventListener('click', function(e){ if(e.target === E.ovR) closeConfirm(); });
+
+/* ---------- Lifecycle ---------- */
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'visible'){
+    if(rollDate()){ render(); }
+    ssLastTap = 0;
+    ssUpdateUI();
+    checkGoldenHour();
+    wkOn();
+  }else{
+    flushSave();
+    wkOff();
+  }
+});
+window.addEventListener('pagehide', flushSave);
+window.addEventListener('beforeunload', flushSave);
+window.addEventListener('blur', flushSave);
+
+/* Cross-tab sync */
+window.addEventListener('storage', function(e){
+  if(e.key !== K('s') || !e.newValue) return;
+  try{ S = sanitize(JSON.parse(e.newValue)); render(); ssUpdateUI(); }catch(err){}
+});
+
+/* ---------- Service worker ---------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js').then(function(reg){
+      reg.addEventListener('updatefound', function(){
+        var nw = reg.installing;
+        if(!nw) return;
+        nw.addEventListener('statechange', function(){
+          if(nw.state === 'installed' && navigator.serviceWorker.controller){
+            showToast('Update ready — reopen app');
+          }
+        });
+      });
+    }).catch(function(){});
+  });
+}
+
+/* ---------- Boot ---------- */
+rollDate();
+render();
+ssUpdateUI();
+zenReset();
+wkOn();
+
+})();
+</script>
+</body>
+</html>
